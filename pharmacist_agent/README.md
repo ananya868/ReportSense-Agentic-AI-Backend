@@ -1,6 +1,6 @@
 # Pharmacist Agent
-The **Pharmacist AI Agent** is an AI Agent designed to provide accurate and reliable information about medications. It helps users understand drug interactions, side effects, usage instructions, and alternatives.
 
+The **Pharmacist AI Agent** is an AI Agent designed to provide accurate and reliable information about medications. It helps users understand drug interactions, side effects, usage instructions, and alternatives.
 
 ### Features
 
