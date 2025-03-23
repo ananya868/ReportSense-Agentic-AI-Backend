@@ -82,7 +82,7 @@ class FetchMedicineData:
                     
             return fetched_content
     
-    def generate_data_points(self, fetched_content: list[str], prompt: str, sys_prompt: str, model_name: str = "gpt-4o-mini") -> dict:
+    def generate_data_points(self, prompt: str, sys_prompt: str, model_name: str = "gpt-4o-mini") -> dict:
         """
         Process the fetched content using OpenAI's API to extract structured medication information.
         
@@ -90,7 +90,6 @@ class FetchMedicineData:
         and expects a response that can be parsed into a MedicationDetails object.
         
         Args:
-            fetched_content (list[str]): The content fetched from webpages.
             prompt (str): The user prompt to send to the OpenAI API.
             sys_prompt (str): The system prompt to send to the OpenAI API.
             model_name (str, optional): The OpenAI model to use. Defaults to "gpt-4o-mini".
