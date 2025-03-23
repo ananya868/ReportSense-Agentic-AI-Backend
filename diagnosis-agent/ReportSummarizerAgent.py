@@ -1,54 +1,54 @@
 """
-File for agent which takes text reports and images,  finds the anomalies and give the summary.
+File for agent which takes text reports and images, finds the anomalies and gives the summary.
 """
-
 
 import pdfplumber
 import pytesseract
 from PIL import Image
-from uagents import Agent, Context, Model
+
+from uagents import Agent, Context
+
+from openai import OpenAI
+from dotenv import load_dotenv
 
 '''
 Request & Response Models
+- ReportRequest: contains the file path of the medical report (PDF or image)
+- ReportResponse: returns the extracted and summarized text from the report
+'''
+from agent_models.report_models import ReportRequest, ReportResponse
+
+
+'''
+Load API Key
+- Load OpenAI API key from the .env file into environment variables.
 '''
 
-
-class ReportRequest(Model):
-    """
-    Request model containing the file path of the medical report.
-    Sent from ReportHandlerAgent to ReportSummarizerAgent.
-    """
-    file_path: str  # Path to the medical report (PDF/Image)
-
-
-class ReportResponse(Model):
-    """
-    Response model containing the extracted text from the medical report.
-    Sent from ReportSummarizerAgent back to ReportHandlerAgent.
-    """
-    extracted_text: str  # Extracted text content
-
+load_dotenv()
 
 '''
 Agent Configuration
+- ReportSummarizerAgent runs locally on port 8002.
+- It receives text/image reports, extracts content, sends it to GPT-3.5, and returns a medical summary.
 '''
 
-# Create the ReportSummarizerAgent (Runs on localhost, port 8002)
 report_summarizer_agent = Agent(name="ReportSummarizerAgent", port=8002, endpoint="http://localhost:8002/submit")
 
-# Address of ReportHandlerAgent (Replace with actual ReportHandlerAgent address from logs)
+# Address of the ReportHandlerAgent that will receive the summarized report
 REPORT_HANDLER_AGENT_ADDRESS = "agent1qfteffcpfqhrsj9mpcjxvza42axkr5y9zva0fnmgztzmpaaxse00garhcdv"
 
 '''
 Report Processing Handler
+- Triggered when a ReportRequest is received.
+- Extracts text from the report file (PDF or image), generates summary using GPT-3.5, and responds.
 '''
-
 
 @report_summarizer_agent.on_message(model=ReportRequest)
 async def process_report(ctx: Context, sender: str, message: ReportRequest):
     """
     Handles incoming report processing requests.
-    Extracts text from the given file (PDF/Image) and sends back a response.
+    Extracts text from the given file (PDF/Image), sends it to GPT-3.5,
+    and sends back the summarized result with abnormalities.
 
     Args:
         ctx (Context): UAgents context for communication
@@ -66,16 +66,20 @@ async def process_report(ctx: Context, sender: str, message: ReportRequest):
     else:
         extracted_text = "Unsupported file format."
 
-    # Send extracted text back to ReportHandlerAgent
-    ctx.logger.info("Sending extracted text back to ReportHandlerAgent...")
-    response = ReportResponse(extracted_text=extracted_text)
+    # Send to GPT for summarization & abnormality detection
+    ctx.logger.info("Sending extracted text to GPT-3.5 for medical summary...")
+    summarized_text = summarize_with_gpt(extracted_text)
+
+    # Send summarized output back to ReportHandlerAgent
+    ctx.logger.info("Sending summarized result back to ReportHandlerAgent...")
+    response = ReportResponse(extracted_text=summarized_text)
     await ctx.send(REPORT_HANDLER_AGENT_ADDRESS, response)
 
 
 '''
 Text Extraction Utilities
+- Extracts text from either PDF or image using pdfplumber or pytesseract respectively.
 '''
-
 
 def extract_text_from_pdf(file_path: str) -> str:
     """
@@ -118,9 +122,50 @@ def extract_text_from_image(file_path: str) -> str:
 
 
 '''
+OpenAI GPT-3.5 Integration
+- Uses OpenAI’s chat completion API to analyze and summarize the medical report.
+'''
+
+client = OpenAI()  # Automatically reads API key from environment
+
+def summarize_with_gpt(report_text: str) -> str:
+    """
+    Sends the extracted report text to OpenAI GPT-3.5 for summarization and abnormality detection.
+
+    Args:
+        report_text (str): The extracted raw text from the report
+
+    Returns:
+        str: A natural language summary with abnormalities and simplified explanations
+    """
+    try:
+        prompt = f"""
+You are a medical AI assistant. Analyze the following medical report.
+1. Summarize the findings.
+2. Highlight any abnormal values or potential health concerns.
+3. Explain complex medical terms in simple language.
+
+Report:
+\"\"\"
+{report_text}
+\"\"\"
+"""
+        response = client.chat.completions.create(
+            model="gpt-3.5-turbo",
+            messages=[{"role": "user", "content": prompt}],
+            temperature=0.5,
+            max_tokens=1000
+        )
+        return response.choices[0].message.content.strip()
+    except Exception as e:
+        return f"Error generating summary with GPT: {str(e)}"
+
+
+'''
 Main Execution
+- Starts the ReportSummarizerAgent and prints its address for reference.
 '''
 
 if __name__ == "__main__":
-    print(f"ReportSummarizerAgent Address: {report_summarizer_agent.address}")  # Print for ReportHandlerAgent reference
+    print(f"ReportSummarizerAgent Address: {report_summarizer_agent.address}")
     report_summarizer_agent.run()
