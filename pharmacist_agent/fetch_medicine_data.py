@@ -1,6 +1,8 @@
 import os, json
 import asyncio
 
+from schema import MedicationDetails
+
 from googlesearch import search 
 from crawl4ai import AsyncWebCrawler, CrawlerRunConfig, BrowserConfig, CacheMode
 from openai import OpenAI
@@ -9,10 +11,10 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+
 class FetchMedicineData:
     """
     A class for fetching and processing medication information from the web.
-    
     This class uses Google search to find relevant URLs, web crawling to fetch content,
     and OpenAI's API to extract structured medication information from the fetched content.
     
@@ -43,7 +45,7 @@ class FetchMedicineData:
             list[str]: A list of URLs from the search results.
         """
         return [result for result in search(
-            f"{self.medicine_name} drugs.com", num_results=num_res, unique=True, advanced=False
+            f"{self.medicine_name} drugs.com", num_results=num_res, unique=False, advanced=False
         )]
     
     async def fetch_webpage(self, url: str) -> list[str]:
@@ -82,7 +84,7 @@ class FetchMedicineData:
                     
             return fetched_content
     
-    def generate_data_points(self, prompt: str, sys_prompt: str, model_name: str = "gpt-4o-mini") -> dict:
+    def generate_data_points(self, prompt: str, sys_prompt: str) -> dict:
         """
         Process the fetched content using OpenAI's API to extract structured medication information.
         
@@ -92,7 +94,6 @@ class FetchMedicineData:
         Args:
             prompt (str): The user prompt to send to the OpenAI API.
             sys_prompt (str): The system prompt to send to the OpenAI API.
-            model_name (str, optional): The OpenAI model to use. Defaults to "gpt-4o-mini".
             
         Returns:
             dict: A dictionary containing structured medication information parsed from
@@ -101,7 +102,7 @@ class FetchMedicineData:
         client = OpenAI()
         
         completion = client.beta.chat.completions.parse(
-            model=model_name,
+            model="gpt-4o-mini",
             messages=[
                 {"role": "system", "content": sys_prompt},
                 {"role": "user", "content": prompt}
@@ -117,8 +118,9 @@ class FetchMedicineData:
 
 # Example Usage
 if __name__=="__main__":
-    fetcher = FetchMedicineData()
-    search_results = fetcher.search_web("Levetiracetam drugs.com")
+    fetcher = FetchMedicineData(medicine_name="Levetiracetam")
+    print(fetcher.medicine_name)
+    search_results = fetcher.search_web()
     print(search_results)
     print("Fetching Webpage...")
     page = asyncio.run(fetcher.fetch_webpage(search_results))
@@ -136,8 +138,8 @@ if __name__=="__main__":
         Your goal is to analyze the provided context carefully and fill in the relevant fields. 
         If a particular piece of information is not found, return "missing" as its value instead of leaving it blank. 
 
-        Ensure accuracy while extracting details and avoid making assumptions. Only use information explicitly stated in the context.
-    """
+    #     Ensure accuracy while extracting details and avoid making assumptions. Only use information explicitly stated in the context.
+    # """
     print("Generating Data Points...")
     # Generate data points
     data_points = fetcher.generate_data_points(context, prompt, sys_prompt)

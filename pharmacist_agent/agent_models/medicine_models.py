@@ -6,7 +6,7 @@ class MedicineRequest(Model):
     Uses medicine name as the request parameter.
     """ 
     medicine_name: str
-    is_save: bool = False
+    is_save: bool = True
 
 class MedicineResponse(Model):
     """ 
