@@ -1,4 +1,4 @@
-from fetch_medicine_data import FetchMedicineData
+from workers.fetch_medicine_data import FetchMedicineData
 from agent_models.medicine_models import MedicineRequest, MedicineResponse
 
 from uagents import Agent, Context 
