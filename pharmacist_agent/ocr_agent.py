@@ -1,6 +1,7 @@
 from uagents import Agent, Context 
 import asyncio
 
+from workers.fetch_medicine_info import FetchMedicineInfo
 from agent_models.medicine_models import MedicineRequest, MedicineResponse
 
 
@@ -27,7 +28,6 @@ async def send_request(ctx: Context):
     
     # Send a request to the medicine agent
     await ctx.send(medicine_agent_address, MedicineRequest(medicine_name=medicine_name))
-
 
 
 # run the agent 
