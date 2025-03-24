@@ -1,7 +1,7 @@
 from uagents import Agent, Context 
 import asyncio
 
-from workers.fetch_medicine_info import FetchMedicineInfo
+from workers.fetch_medicine_info_ocr import FetchMedicineInfo
 from agent_models.medicine_models import MedicineRequest, MedicineResponse
 
 

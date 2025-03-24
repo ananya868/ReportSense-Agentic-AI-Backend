@@ -1,0 +1,95 @@
+{
+    "medication_name": "Frisium 10mg Tablets",
+    "generic_name": "Clobazam",
+    "ingredients": [
+        "Clobazam",
+        "Lactose",
+        "Maize starch",
+        "Talc",
+        "Colloidal silicon dioxide",
+        "Magnesium stearate"
+    ],
+    "brand_names": [
+        "Frisium"
+    ],
+    "medicine_use": "Severe anxiety over a short time, Epilepsy (fits) over a longer time, Mental illness such as schizophrenia (in combination with other treatments)",
+    "common_side_effects": [
+        "Feeling sleepy or dizzy",
+        "Dry mouth",
+        "Constipation",
+        "Loss of appetite",
+        "Feeling sick",
+        "Shaking fingers",
+        "Headache",
+        "Breathing problems",
+        "Loss of memory",
+        "Confusion",
+        "Skin rash",
+        "Muscle weakness",
+        "Problems walking or other movement problems",
+        "Being aggressive",
+        "Reacting to things more slowly than usual",
+        "Eye problems such as double vision and rapid uncontrollable movement of the eyes",
+        "Difficulty in staying awake or alert",
+        "Becoming dependent on Frisium",
+        "Weight gain",
+        "Loss of sexual drive"
+    ],
+    "severe_side_effects": [
+        "Feeling restless",
+        "Difficulty sleeping or nightmares",
+        "Feeling irritable or anxious",
+        "Believing things which are not true (delusions)",
+        "Sensing things which are not there (hallucinations)",
+        "Feeling suicidal",
+        "Increased possibility of tripping or falling especially in elderly patients",
+        "Blistering or bleeding of the skin around the lips, eyes, mouth, nose and genitals",
+        "Stevens Johnson Syndrome",
+        "Toxic epidermal necrolysis"
+    ],
+    "immediate_attention_side_effects": [
+        "Drowsiness, difficulties breathing, coma and death may occur if Frisium is taken together with opioids"
+    ],
+    "how_to_use": "Always take Frisium exactly as your doctor has told you. Swallow the tablets whole, or crushed and mixed with apple sauce. The tablets can be divided into equal halves of 5mg. Frisium can be taken with or without food.",
+    "storage_instructions": "Keep out of the sight and reach of children. Do not store above 25\u00b0C. Do not take Frisium after the expiry date which is stated on the label.",
+    "mechanism_of_action": "Frisium works by having a calming effect on the brain.",
+    "warnings_precautions": [
+        "Alcohol should not be taken during treatment with Frisium as there is an increased risk of experiencing side effects.",
+        "Patients over 65 may experience increased sensitivity to adverse reactions such as drowsiness, dizziness, and muscle weakness.",
+        "Talk to your doctor if you have kidney problems, difficulty digesting medicines, or a history of drug or alcohol dependence."
+    ],
+    "alternative_medicines": [
+        "other benzodiazepines"
+    ],
+    "natural_alternatives": [
+        "missing"
+    ],
+    "regulatory_approval": "missing",
+    "drug_interactions": "Frisium can affect the way some other medicines work and vice versa. Notable interactions include antiepileptic drugs, antipsychotics, painkillers, and antidepressants.",
+    "forms_variants": [
+        "tablets"
+    ],
+    "prescription_required": true,
+    "contraindications": [
+        "Allergy to clobazam or other benzodiazepines",
+        "Patients in the first three months of pregnancy",
+        "Breastfeeding",
+        "History of drug or alcohol dependence",
+        "Myasthenia gravis",
+        "Liver problems",
+        "Breathing problems",
+        "Sleep apnoea syndrome",
+        "Patients under 6 years old"
+    ],
+    "drug_class": "benzodiazepines",
+    "pregnancy_lactation": "Do not take Frisium if you are in the first three months of pregnancy or breastfeeding.",
+    "dosage_forms": [
+        "10mg tablets"
+    ],
+    "special_populations_children": "The usual dose for children (6 years and above) is 5 mg each day.",
+    "special_populations_elderly": "The usual dose for elderly patients for anxiety is 10 mg to 20 mg each day.",
+    "special_populations_renal_impairment": "missing",
+    "special_populations_hepatic_impairment": "missing",
+    "overdose_information": "If you take more Frisium than you should, tell your doctor or go to your nearest hospital straight away.",
+    "reviews_rating": "missing"
+}
