@@ -49,7 +49,7 @@ CLASS_NAMES = [
 model.classifier = torch.nn.Linear(model.classifier.in_features, len(CLASS_NAMES))
 
 # Load model weights (ignoring mismatched layers like old classifier)
-state_dict = torch.load("/Users/js/Desktop/ReportSense-Agentic-AI-Backend/diagnosis-agent/image_models/chexnet_model.pth", map_location=device)
+state_dict = torch.load("/Users/js/Desktop/ReportSense-Agentic-AI-Backend/diagnosis-agent/image_models/weights/chexnet_model.pth", map_location=device)
 filtered_state_dict = {k: v for k, v in state_dict.items() if "classifier" not in k}  # Remove outdated classifier weights
 model.load_state_dict(filtered_state_dict, strict=False)
 
