@@ -1,9 +1,13 @@
 import os, json 
+import re 
+import tiktoken
 from datetime import datetime
+from tqdm import tqdm
 
 from googlesearch import search 
 from crawl4ai import AsyncWebCrawler, CrawlerRunConfig, BrowserConfig, CacheMode
 from openai import OpenAI
+from groq import Groq
 
 from dotenv import load_dotenv
 
@@ -12,10 +16,12 @@ load_dotenv()
 
 class FetchMedicinePrices:
     """
-    """ 
+    A class to fetch the prices of a medicine from various pharmacy websites.
+    """
 
     def __init__(self, medicine_name: str):
         """
+        Initializes the FetchMedicinePrices object with the name of the medicine.
         """
         self.medicine_name = medicine_name
 
@@ -68,6 +74,78 @@ class FetchMedicinePrices:
                 
             return fetched_pages
 
+    def clean_pages(self, pages: list[str], max_tokens: int = 2500):
+        """
+        Cleans the fetched pages to extract the prices.
+        """
+        cleaned_pages = []
+
+        for page in pages: 
+            # Remove URLs 
+            text = re.sub(r'http[s]?://\S+', '', page)
+            # Remove non-alphanumeric characters (excluding spaces and basic punctuation)
+            text = re.sub(r'[^\w\s.,!?]', '', text)
+            # Replace multiple spaces with a single space
+            text = re.sub(r'\s+', ' ', text).strip()
+            cleaned_pages.append(text)
+
+        # Maintain Token size for LLM 
+        encoding = tiktoken.get_encoding("cl100k_base")
+        result = []
+
+        for page in cleaned_pages:
+            tokens = encoding.encode(page)
+            if len(tokens) > max_tokens:
+                tokens = tokens[:max_tokens]
+                page = encoding.decode(tokens)
+            result.append(page)
+
+        cleaned_pages = result
+
+        # print total number of tokens in each page
+        for i, page in enumerate(cleaned_pages):
+            print(f"Page {i+1} has {len(encoding.encode(page))} tokens")
+        return cleaned_pages
+    
+    def llm(self, cleaned_page: str, api_key: str = os.getenv("GROQ_API_KEY")):
+        """
+        Extracts the prices from the cleaned pages using the Groq API.
+        """
+        client = Groq(api_key=api_key)
+
+        prompt_message = f"""
+            Given below is a text fetched from a pharmacy website. Please extract the prices of the medicine: {self.medicine_name} from the text.
+            Also the number of tablets (if given). 
+            Text: {cleaned_page}
+            Your output should be json format with the following fields:
+            - name: The name of the medicine
+            - price: The price of the medicine
+            - quantity: The number of tablets (if given)
+
+        """ 
+
+        completion = client.chat.completions.create(
+            messages = [
+                { 
+                    "role": "user",
+                    "content": prompt_message
+                }
+            ], 
+            model = "llama-3.3-70b-versatile"
+        )
+
+        return completion.choices[0].message.content
+
+    def get_prices(self, cleaned_pages: list[str]):
+        """
+        Extracts the prices from the cleaned pages using regex.
+        """
+        prices = []
+        for page in tqdm(cleaned_pages):
+            info = self.llm(cleaned_page=page)
+            prices.append(info)
+
+        return prices
 
 
 
@@ -75,10 +153,20 @@ class FetchMedicinePrices:
 if __name__ == "__main__":
     import asyncio
 
+    print("Fetching medicine prices...")
     medicine_name = "levipil 500"
     fetcher = FetchMedicinePrices(medicine_name)
     urls = fetcher.fetch_links()
     
+    print("Scraping the websites...")
     # Scrapper 
     pages = asyncio.run(fetcher.fetch_prices(urls))
-    print(pages[3]) # Print the content of the first fetched page
+    
+    print("Cleaning the pages...")
+    # Cleaning
+    cleaned_pages = fetcher.clean_pages(pages)
+
+    print("Extracting prices...")
+    # prices 
+    prices = fetcher.get_prices(cleaned_pages)
+    print(prices)
