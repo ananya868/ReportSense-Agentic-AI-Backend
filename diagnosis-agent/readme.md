@@ -28,4 +28,16 @@
 
 >📱 **Mobile App (Planned)**  
 >A dedicated **Android & iOS app** for easy report analysis on the go.
- 
+
+
+### Agents Overview
+
+Below is a summary of the specialized medical diagnosis agents implemented so far, including the medical image types each handles and the AI models used:
+
+| Agent Name            | Medical Image Type | Model Used                                                                     |
+|-----------------------|--------------------|--------------------------------------------------------------------------------|
+| **ChestXrayAgent**    | Chest X-ray        | **CheXNet (DenseNet-121)**                                                     |
+| **BrainMRIAgent**     | Brain MRI          | **VGG-16 CNN (trained from scratch)**                                          |
+| **LungCancerAgent**   | Lung CT Scan       | **ResNet-18 CNN (trained from scratch)**                                       |
+| **ReportSummarizerAgent** | Text Reports       | **Text Extraction (pdfplumber & Tesseract OCR) and GPT-3.5 (LLM Integration)** |
+| **ReportHandlerAgent** | Report Management  | **Handles the communication between all the agents**                           |
