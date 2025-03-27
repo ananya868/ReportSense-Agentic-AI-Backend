@@ -3,6 +3,8 @@ import re
 import tiktoken
 from datetime import datetime
 from tqdm import tqdm
+from tqdm.asyncio import tqdm_asyncio
+import asyncio
 
 from googlesearch import search 
 from crawl4ai import AsyncWebCrawler, CrawlerRunConfig, BrowserConfig, CacheMode
@@ -74,7 +76,7 @@ class FetchMedicinePrices:
                 
             return fetched_pages
 
-    def clean_pages(self, pages: list[str], max_tokens: int = 2500):
+    def clean_pages(self, pages: list[str], max_tokens: int = 2000):
         """
         Cleans the fetched pages to extract the prices.
         """
@@ -147,11 +149,11 @@ class FetchMedicinePrices:
 
         return prices
 
-
-
 # Example usage 
 if __name__ == "__main__":
     import asyncio
+    from concurrent.futures import ThreadPoolExecutor
+    import time
 
     print("Fetching medicine prices...")
     medicine_name = "levipil 500"
@@ -167,6 +169,11 @@ if __name__ == "__main__":
     cleaned_pages = fetcher.clean_pages(pages)
 
     print("Extracting prices...")
-    # prices 
+    # # prices 
+    # prices = fetcher.get_prices(cleaned_pages)
+    # print(prices)
+    s = time.time()
     prices = fetcher.get_prices(cleaned_pages)
+    e = time.time()
+    print(f"Time taken: {e-s} seconds")
     print(prices)
