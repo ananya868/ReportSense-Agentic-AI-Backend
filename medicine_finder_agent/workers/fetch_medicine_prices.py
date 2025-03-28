@@ -119,10 +119,11 @@ class FetchMedicinePrices:
             Given below is a text fetched from a pharmacy website. Please extract the prices of the medicine: {self.medicine_name} from the text.
             Also the number of tablets (if given). 
             Text: {cleaned_page}
-            Your output should be json format with the following fields:
+            Your output should be dictionary format with the following fields:
             - name: The name of the medicine
             - price: The price of the medicine
             - quantity: The number of tablets (if given)
+        - Only output the dictionary, no extra text! 
 
         """ 
 
@@ -143,8 +144,11 @@ class FetchMedicinePrices:
         Extracts the prices from the cleaned pages using regex.
         """
         prices = []
+        # Convert the cleaned pages to json format
+
         for page in tqdm(cleaned_pages):
             info = self.llm(cleaned_page=page)
+            info = json.loads(info)
             prices.append(info)
 
         return prices
@@ -156,7 +160,7 @@ if __name__ == "__main__":
     import time
 
     print("Fetching medicine prices...")
-    medicine_name = "levipil 500"
+    medicine_name = "frisium 10 mg"
     fetcher = FetchMedicinePrices(medicine_name)
     urls = fetcher.fetch_links()
     
@@ -176,4 +180,5 @@ if __name__ == "__main__":
     prices = fetcher.get_prices(cleaned_pages)
     e = time.time()
     print(f"Time taken: {e-s} seconds")
-    print(prices)
+    print(type(prices[0])) 
+    print(prices[0])

@@ -15,4 +15,4 @@ class MedicinePriceResponse(Model):
     Contains the medicine name and a dictionary of medicine price information.
     """ 
     medicine_name: str
-    medicine_price_info: dict
+    medicine_price_info: list[dict]

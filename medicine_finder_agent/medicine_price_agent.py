@@ -16,7 +16,7 @@ medicine_price_agent = Agent(name="MedicinePriceAgent", port=5003, endpoint="htt
 # print medicine price agent address
 print(medicine_price_agent.address)
 
-# Receiver agent address
+# Receiver agent address | Chatbot agent
 # 
 
 @medicine_price_agent.on_message(model=MedicinePriceRequest)
@@ -34,19 +34,19 @@ async def handle_medicine_price_request(ctx: Context, sender: str, msg: Medicine
     # Log Context info
     ctx.logger.info(f"Received a request to fetch prices for the medicine: {msg.medicine_name} from {sender}")
     # Initialize the fetcher
-    print("⏰️ Initiating Data Fetching...")
+    # print("⏰️ Initiating Data Fetching...")
     fetcher = FetchMedicinePrices(medicine_name=msg.medicine_name)
     # Search the web for the medicine
-    print("🔍️ Searching the web for the medicine...")
+    # print("🔍️ Searching the web for the medicine...")
     urls = fetcher.fetch_links()
     # Scrape the websites
-    print("🕸️ Scraping the websites...")
+    # print("🕸️ Scraping the websites...")
     pages = asyncio.run(fetcher.fetch_prices(urls))
     # Clean the pages
-    print("🧼 Cleaning the pages...")
+    # print("🧼 Cleaning the pages...")
     cleaned_pages = fetcher.clean_pages(pages)
     # Extract the prices
-    print("💰 Extracting prices...")
+    # print("💰 Extracting prices...")
     start = time.time()
     prices = fetcher.get_prices(cleaned_pages)
     end = time.time()
@@ -62,5 +62,7 @@ async def handle_medicine_price_request(ctx: Context, sender: str, msg: Medicine
         medicine_name=msg.medicine_name,
         medicine_price_info=prices
     )
+    print("Print Schema")
+    print(medicine_price_response.json())
     # await ctx.send(sender, medicine_price_response)
 

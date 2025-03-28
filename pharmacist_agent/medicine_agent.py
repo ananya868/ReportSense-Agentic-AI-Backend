@@ -52,24 +52,24 @@ async def handle_medicine_request(ctx: Context, sender: str, msg: MedicineReques
     ctx.logger.info(f"Received a request to fetch data for the medicine: {msg.medicine_name} from {sender}")
 
     # Initialize the fetcher 
-    print("⏰️ Initiating Data Fetching...")
+    # print("⏰️ Initiating Data Fetching...")
     fetcher = FetchMedicineData(medicine_name=msg.medicine_name)
     # Search the web for the medicine
-    print("🔍️ Searching the web for the medicine...")
+    # print("🔍️ Searching the web for the medicine...")
     url = fetcher.search_web()
     # Fetch the webpage content
-    print("🌐️ Fetching the webpage content...")
+    # print("🌐️ Fetching the webpage content...")
     # Fetch the webpage content
     page = asyncio.run(fetcher.fetch_webpage(url))
     context = page[0]
-    print("📄️ Webpage content fetched successfully!")
+    # print("📄️ Webpage content fetched successfully!")
 
     # Build prompts with context
     formatted_prompt = prompt.format(context=context)
     formatted_sys_prompt = sys_prompt
     
     # Generate medicine data points 
-    print("🧠️ Generating Data Points...")
+    # print("🧠️ Generating Data Points...")
     data_points = fetcher.generate_data_points(formatted_prompt, formatted_sys_prompt)
     # Convert to json/dict
     data_dict = data_points.dict()
@@ -78,7 +78,7 @@ async def handle_medicine_request(ctx: Context, sender: str, msg: MedicineReques
     if msg.is_save: # Save the data to a json file
         with open(f"medi_data/{msg.medicine_name}_data.json", "w") as f: 
             json.dump(data_dict, f, indent=4)
-    print("✅ Data Points Generated Successfully")
+    # print("✅ Data Points Generated Successfully")
 
     # Send the data to the LLM Medicine Informant Agent
     medicine_response = MedicineResponse(
