@@ -1,7 +1,7 @@
 import os, json
 import asyncio
 
-from schema import MedicationDetails
+from workers.schema import MedicationDetails
 
 from googlesearch import search 
 from crawl4ai import AsyncWebCrawler, CrawlerRunConfig, BrowserConfig, CacheMode

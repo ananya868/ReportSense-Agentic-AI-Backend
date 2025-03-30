@@ -4,7 +4,7 @@ import json
 import os 
 
 
-class FetchMedicineInfo:
+class MedicineOCR:
     """
     A class for fetching medicine information using OCR.
     """
@@ -34,7 +34,7 @@ class FetchMedicineInfo:
         with open(image_path, "rb") as image_file: 
             return base64.b64encode(image_file.read()).decode("utf-8")
 
-    def fetch_medicine_info(self, image_path: str) -> dict:
+    def fetch(self, image_path: str) -> list[str]:
         """
         Fetch medicine information using OCR.
 
@@ -44,6 +44,7 @@ class FetchMedicineInfo:
         Returns:
             dict: The extracted medicine information
         """
+        print("Analyzing the Prescription ..")
         # Initialize the OpenAI client
         client = OpenAI(api_key=self.api_key)
 
@@ -73,7 +74,8 @@ class FetchMedicineInfo:
         )
 
         response = completion.choices[0].message.content 
-        return json.loads(response)
+        res_dict = json.loads(response)
+        return res_dict.get("medicines", [])
         
 
 
