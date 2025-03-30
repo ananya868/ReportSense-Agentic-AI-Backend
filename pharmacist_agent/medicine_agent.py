@@ -15,9 +15,12 @@ medicine_agent = Agent(name="MedicineAgent", port=5000, endpoint="http://localho
 
 # Medicine data fetcher agent address | Sender Agent | This agent
 # print(medicine_agent.address)
+medicine_data_agent_address = "agent1qfuf2sf8dczw9pzy059x9wrwq4sdtnf2m5uqgwlttwmgdezvygxpk9sqg6n"
 
-# Receiver agent address | LLM Medicine Informant Agent | Receiver Agent 
-llm_medicine_informant_address = "agent1qfw83q7u9wzc04c5t6f5a4evhkexwkfxfatrvln6wk0hmn9myrkmsz9uqfy"
+# Chatbot agent or Medicine finder agent address | Receiver Agent 
+chatbot_agent_address = ""
+medicine_finder_agent_address = "agent1qgfx3g350nc4gqrguhfqr0hxv9zx72urq6jhfatf3s765rhzncjc2wcssnq"
+
 
 # Define the prompt and system prompt 
 prompt = """Analyze the provided webpage content and extract structured details about the medication using the following fields:
@@ -95,9 +98,10 @@ async def handle_medicine_request(ctx: Context, sender: str, msg: MedicineReques
         medicine_name=msg.medicine_name,
         medicine_info=data_dict
     )
-    await ctx.send(llm_medicine_informant_address, medicine_response)
+    # await ctx.send(llm_medicine_informant_address, medicine_response)
 
 
 # Run the agent
 if __name__ == "__main__":
-    medicine_agent.run()
+    # medicine_agent.run()
+    pass

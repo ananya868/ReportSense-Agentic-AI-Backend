@@ -14,10 +14,12 @@ nest_asyncio.apply()
 medicine_price_agent = Agent(name="MedicinePriceAgent", port=5003, endpoint="http://localhost:5003/submit")
 
 # print medicine price agent address
-print(medicine_price_agent.address)
+# print(medicine_price_agent.address)
+medicine_finder_agent_address = "agent1qgfx3g350nc4gqrguhfqr0hxv9zx72urq6jhfatf3s765rhzncjc2wcssnq"
 
 # Receiver agent address | Chatbot agent
-# 
+# chatbot_agent_address = "nothing"
+
 
 @medicine_price_agent.on_message(model=MedicinePriceRequest)
 async def handle_medicine_price_request(ctx: Context, sender: str, msg: MedicinePriceRequest):
@@ -65,4 +67,6 @@ async def handle_medicine_price_request(ctx: Context, sender: str, msg: Medicine
     print("Print Schema")
     print(medicine_price_response.json())
     # await ctx.send(sender, medicine_price_response)
+
+
 

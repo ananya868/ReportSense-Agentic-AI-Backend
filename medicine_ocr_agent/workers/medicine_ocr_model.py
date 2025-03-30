@@ -2,6 +2,10 @@ import base64
 from openai import OpenAI 
 import json 
 import os 
+import logging
+
+logging.getLogger("openai").setLevel(logging.ERROR)
+logging.getLogger("httpx").setLevel(logging.ERROR)
 
 
 class MedicineOCR:

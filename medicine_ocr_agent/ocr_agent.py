@@ -1,3 +1,11 @@
+"""
+Medicine OCR Agent receives a request from Test Agent (Manager Agent) to fetch medicine names from an image.
+Uses vision model to detect the medicine names from the image.
+The detected names are then confirmed by the user.
+Users can also manually enter the medicine names if OCR fails to detect them.
+This agent sends the detected/entered medicine names to the Medicine Finder Agent or Medicine Data Agent. 
+"""
+
 from uagents import Agent, Context 
 import asyncio
 import os
@@ -5,13 +13,14 @@ from dotenv import load_dotenv
 load_dotenv()
 
 from workers.medicine_ocr_model import MedicineOCR
-from agent_models.medicine_models import MedicineRequest, MedicineResponse
+from agent_models.medicine_models import MedicineOCRRequest, MedicineOCRResponse
 
 
 ocr_agent = Agent(name="OCR Agent", port=5002, endpoint="http://localhost:5002/submit")
 
-# Medicine data fetcher agent address | Receiver Agent
-medicine_agent_address = "agent1qfuf2sf8dczw9pzy059x9wrwq4sdtnf2m5uqgwlttwmgdezvygxpk9sqg6n"
+# Medicine data fetcher agent address or Medicine finder agent | Receiver Agents 
+medicine_data_agent_address = "agent1qfuf2sf8dczw9pzy059x9wrwq4sdtnf2m5uqgwlttwmgdezvygxpk9sqg6n"
+medicine_finder_agent = "agent1qgfx3g350nc4gqrguhfqr0hxv9zx72urq6jhfatf3s765rhzncjc2wcssnq"
 
 # Medicine OCR model | Sender Agent | This agent 
 # print(ocr_agent.address) 
@@ -19,7 +28,6 @@ ocr_agent_address = "agent1q0xe4wfkjuk3zc6v5683cyfa7gk38erd2lzt49pejmryv822x084w
 
 
 # Workers 
-img_path = "med.png"
 med_ocr = MedicineOCR(api_key = os.getenv("OPENAI_API_KEY"))
 
 
@@ -82,7 +90,7 @@ def process_medicines(img_path):
         return medicines
     
     while not confirmed:
-        method = input("Please select method to fetch medicine names: \n 1. OCR \n 2. Manual Entry \n:")
+        method = input("Please select method to fetch medicine names: \n 1. OCR \n 2. Manual Entry \n => ")
         
         if method == "1":
             medicines = med_ocr.fetch(img_path)
@@ -92,7 +100,7 @@ def process_medicines(img_path):
                     "1. Enter medicine(s) name manually \n",
                     "2. Retry the OCR process \n",
                 )
-                choice = input("Please select an option (1 or 2): ")
+                choice = input("Please select an option (1 or 2) => ").strip()
                 if choice == "1":
                     medicines = get_manual_entry()
                 elif choice == "2":
@@ -107,7 +115,7 @@ def process_medicines(img_path):
             
         if not medicines:
             print("No valid medicines found!")
-            retry = input("Would you like to try again? (yes/no): ").strip().lower()
+            retry = input("Would you like to try again? (yes/no) => ").strip().lower()
             if retry != "yes":
                 return []
             continue
@@ -122,6 +130,7 @@ def process_medicines(img_path):
 
 
 # Agent Function
+# @ocr_agent.on_message(Model=MedicineOCRRequest) # to be implemented ... 
 @ocr_agent.on_event("startup")
 async def send_request(ctx: Context):
     """
@@ -130,6 +139,7 @@ async def send_request(ctx: Context):
     Args:             
         ctx (Context): The context object
     """
+    img_path = "med.png" ## This will be fetched from msg.img_path | MedicineOCRRequest
     medicines = process_medicines(img_path)
     if medicines: 
         ctx.logger.info(f"Medicines detected: {medicines}")
