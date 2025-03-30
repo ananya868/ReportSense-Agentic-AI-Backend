@@ -1,0 +1,14 @@
+{
+    "ChestXrayAgent": {
+        "identity_key": "a1248cd33976a90b231421ebd67c342b8182edbf8cdc1bbe8ac6f43654fe95bd",
+        "wallet_key": "Uoh9D716vXRz0E4C9iXRycxcb2rlZxc4O7ZBfIiPNhs="
+    },
+    "BrainMRIAgent": {
+        "identity_key": "f566d83c1d853142e9b4545cb565e7139af4ef457575f05bbbf436b1a836bdc3",
+        "wallet_key": "9xeqjp6Cm+OEXpkRqKb83mscKjel9lfb3UZZfKe2Hsc="
+    },
+    "LungCancerAgent": {
+        "identity_key": "a690ebdb53aeff5749c641c7bc2d4ba1ba66e19c85ae209b0b67ea04420f6073",
+        "wallet_key": "VJW2ehLKZjh2LI2mmokNx8VzuNxGtJiA1B0zSuLwu5o="
+    }
+}

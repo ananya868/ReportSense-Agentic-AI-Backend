@@ -175,3 +175,10 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+
+# Training and Testing data for Brain MRI Model Training
+/diagnosis-agent/data/BrainMRI_Data/Testing/
+/diagnosis-agent/data/BrainMRI_Data/Training/
+/diagnosis-agent/data/LungCancer_Data/test/
+/diagnosis-agent/data/LungCancer_Data/train/
+/diagnosis-agent/data/LungCancer_Data/valid/
