@@ -1,0 +1,14 @@
+{
+    "LLMMedicineInformantAgent": {
+        "identity_key": "8d54393412e269922169133787431a50b6239b16539e90b13ea75994399ba631",
+        "wallet_key": "whEqBbGAPhZTmXPkM4RDnRFK0QsOF9UYfCUxW1MY9qs="
+    },
+    "MedicineAgent": {
+        "identity_key": "69d19c66b2a9e6bc7c8edd43cdd5f17c3e02c24cc9e72b63696c7fcf473f524a",
+        "wallet_key": "DSqmEyIkFhxtOCyMXVwrQQE70+53P3mrwoC63yG8xec="
+    },
+    "OCR Agent": {
+        "identity_key": "919f570c09eca3bc6165d90daea57767f6fa3276ae8e0fd9f3506790c5501927",
+        "wallet_key": "5Ev142R346J8KR9x1bX2d5QLeuLhPjSLO69728Ti+Fk="
+    }
+}

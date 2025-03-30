@@ -17,6 +17,24 @@
   
   - Ingredients (Chemicals)
   
+  - Drug Overlap
+
+  - Storage Instructions
+
+  - Warnings and Precautions (Special precaution for pregnant women, elderly or children)
+
+  - Forms and Variants 
+
+  - How to use?
+
+  - Alternative Medicines
+
+  - Natural Alternatives 
+
+  - Regulatory Approval 
+
+  - How it works ?   
+  
   - Is prescription required? 
 
 - Agent 3: Medicine Finder 
