@@ -1,0 +1,92 @@
+{
+    "medication_name": "Levetiracetam",
+    "generic_name": "levetiracetam (oral/injection)",
+    "ingredients": [],
+    "brand_names": [
+        "Elepsia XR",
+        "Keppra",
+        "Keppra XR",
+        "Roweepra",
+        "Spritam",
+        "Roweepra XR"
+    ],
+    "medicine_use": "Levetiracetam is used alone or together with other medicines to treat certain types of seizures in people with epilepsy, including partial onset seizures, myoclonic seizures, and tonic-clonic seizures.",
+    "common_side_effects": [
+        "dizziness",
+        "drowsiness",
+        "tiredness",
+        "weakness",
+        "feeling aggressive or irritable",
+        "loss of appetite",
+        "nausea",
+        "stuffy nose",
+        "sore throat",
+        "runny nose",
+        "infections"
+    ],
+    "severe_side_effects": [
+        "confusion",
+        "hallucinations",
+        "extreme drowsiness",
+        "loss of balance or coordination",
+        "skin rash",
+        "low blood cell counts"
+    ],
+    "immediate_attention_side_effects": [
+        "allergic reaction signs (hives, difficult breathing, swelling in your face or throat)",
+        "severe skin reaction (fever, sore throat, burning eyes, skin pain, red or purple skin rash with blistering and peeling)",
+        "serious drug reaction symptoms (skin rash, fever, swollen glands, muscle aches, severe weakness, unusual bruising, yellowing of your skin or eyes)",
+        "new or sudden changes in mood or behavior (depression, anxiety, panic attacks, trouble sleeping, impulsivity)"
+    ],
+    "how_to_use": "Take levetiracetam oral with or without food. Levetiracetam injection is given into a vein by a healthcare provider. Follow all directions on your prescription label and read all medication guides or instruction sheets.",
+    "storage_instructions": "Store at room temperature away from moisture, heat, and light.",
+    "mechanism_of_action": "missing",
+    "warnings_precautions": [
+        "Some people have thoughts about suicide while taking seizure medicine.",
+        "Seizures may increase if you stop using levetiracetam suddenly."
+    ],
+    "alternative_medicines": [
+        "Lamictal",
+        "Depakote",
+        "Lybalvi",
+        "Lyrica",
+        "Carbamazepine",
+        "Topiramate",
+        "Diazepam",
+        "Pregabalin",
+        "Lorazepam",
+        "Clonazepam"
+    ],
+    "natural_alternatives": [],
+    "regulatory_approval": "Prescription only",
+    "drug_interactions": "Other drugs may affect levetiracetam, including prescription and over-the-counter medicines, vitamins, and herbal products. Tell your doctor about all other medicines you use.",
+    "forms_variants": [
+        "intravenous solution",
+        "oral solution",
+        "oral tablet",
+        "oral tablet, dispersible",
+        "oral tablet, extended release"
+    ],
+    "prescription_required": true,
+    "contraindications": [
+        "allergy to levetiracetam",
+        "history of depression or mood disorders",
+        "mental illness or psychosis",
+        "kidney disease"
+    ],
+    "drug_class": "Pyrrolidine anticonvulsants",
+    "pregnancy_lactation": "Do not start or stop seizure medication during pregnancy without your doctor's advice. It is not known if levetiracetam will harm an unborn baby.",
+    "dosage_forms": [
+        "intravenous solution (100 mg/mL; 1000 mg/100 mL-NaCl 0.75%; 1500 mg/100 mL-NaCl 0.54%; 250 mg/50 mL-NaCl 0.82%; 500 mg/100 mL-NaCl 0.82%)",
+        "oral solution (100 mg/mL)",
+        "oral tablet (1000 mg; 250 mg; 500 mg; 750 mg)",
+        "oral tablet, dispersible (1000 mg; 250 mg; 500 mg; 750 mg)",
+        "oral tablet, extended release (1000 mg; 1500 mg; 500 mg; 750 mg)"
+    ],
+    "special_populations_children": "Certain brand forms may be used in children at least 1 month old. Specific formulations have age and weight requirements.",
+    "special_populations_elderly": "missing",
+    "special_populations_renal_impairment": "missing",
+    "special_populations_hepatic_impairment": "missing",
+    "overdose_information": "Seek emergency medical attention or call the Poison Help line at 1-800-222-1222. Overdose symptoms may include extreme drowsiness, agitation, aggression, shallow breathing, weakness, or fainting.",
+    "reviews_rating": "5.9 / 10"
+}
