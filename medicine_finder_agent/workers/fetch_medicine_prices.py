@@ -203,24 +203,25 @@ if __name__ == "__main__":
     from concurrent.futures import ThreadPoolExecutor
     import time
 
-    print("Fetching medicine prices...")
-    medicine_name = "frisium 10 mg"
-    fetcher = FetchMedicinePrices(medicine_name)
-    urls = fetcher.fetch_links()
-    
-    print("Scraping the websites...")
-    # Scrapper 
-    pages = asyncio.run(fetcher.fetch_prices(urls))
-    
-    print("Cleaning the pages...")
-    # Cleaning
-    cleaned_pages = fetcher.clean_pages(pages)
+    for i in ['ibuprofen', 'paracetamol']:
+        print("Fetching medicine prices...")
+        medicine_name = i
+        fetcher = FetchMedicinePrices(medicine_name)
+        urls = fetcher.fetch_links()
+        
+        print("Scraping the websites...")
+        # Scrapper 
+        pages = asyncio.run(fetcher.fetch_prices(urls))
+        
+        print("Cleaning the pages...")
+        # Cleaning
+        cleaned_pages = fetcher.clean_pages(pages)
 
-    print("Extracting prices...")
+        print("Extracting prices...")
 
-    s = time.time()
-    prices = fetcher.get_prices(urls = urls, cleaned_pages = cleaned_pages, provider = "openai")
-    e = time.time()
-    print(f"Time taken: {e-s} seconds")
-    print(type(prices)) 
-    print(prices)
+        s = time.time()
+        prices = fetcher.get_prices(urls = urls, cleaned_pages = cleaned_pages, provider = "openai")
+        e = time.time()
+        print(f"Time taken: {e-s} seconds") 
+        print(prices)
+        print(" -- - - -- - -- - -- - -")
