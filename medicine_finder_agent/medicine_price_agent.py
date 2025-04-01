@@ -1,5 +1,5 @@
 from workers.fetch_medicine_prices import FetchMedicinePrices
-from agent_models.medicine_price_models import MedicinePriceRequest, MedicinePriceResponse
+from agent_models.medicine_price_models import MedicinePriceRequest, MedicinePriceResponse, MedicinePriceInfo
 
 from uagents import Agent, Context
 import asyncio
@@ -33,39 +33,30 @@ async def handle_medicine_price_request(ctx: Context, sender: str, msg: Medicine
         msg (MedicinePriceRequest): The MedicinePriceRequest message
     """
 
-    # Log Context info
-    ctx.logger.info(f"Received a request to fetch prices for the medicine: {msg.medicine_name} from {sender}")
-    # Initialize the fetcher
-    # print("⏰️ Initiating Data Fetching...")
-    fetcher = FetchMedicinePrices(medicine_name=msg.medicine_name)
-    # Search the web for the medicine
-    # print("🔍️ Searching the web for the medicine...")
-    urls = fetcher.fetch_links()
-    # Scrape the websites
-    # print("🕸️ Scraping the websites...")
-    pages = asyncio.run(fetcher.fetch_prices(urls))
-    # Clean the pages
-    # print("🧼 Cleaning the pages...")
-    cleaned_pages = fetcher.clean_pages(pages)
-    # Extract the prices
-    # print("💰 Extracting prices...")
-    start = time.time()
-    prices = fetcher.get_prices(cleaned_pages)
-    end = time.time()
-    print(f"Time taken: {end-start} seconds")
+    prices_info = {}
+    for i in msg.medicine_names: 
+        # Log Context info
+        ctx.logger.info(f"Received a request to fetch prices for the medicine: {i} from {sender}")
+        # Initialize the fetcher
+        fetcher = FetchMedicinePrices(medicine_name=i)
+        # Search the web for the medicine
+        urls = fetcher.fetch_links()
+        # Scrape the websites
+        pages = asyncio.run(fetcher.fetch_prices(urls))
+        # Clean the pages
+        cleaned_pages = fetcher.clean_pages(pages)
+        # Extract the prices
+        prices = fetcher.get_prices(cleaned_pages, provider = "openai") 
 
-    # Print the prices along with the urls 
-    for i, price in enumerate(prices):
-        print(f"URL: {urls[i]}")
-        print(price)
+        # Store the prices in the dictionary
+        prices_info[i] = prices
 
-    # Send the response to the sender
-    medicine_price_response = MedicinePriceResponse(
-        medicine_name=msg.medicine_name,
-        medicine_price_info=prices
-    )
-    print("Print Schema")
-    print(medicine_price_response.json())
+    # Create the response object 
+    medicine_price_response = MedicinePriceResponse(medicine_price_info=prices_info)
+
+    
+    # print("Print Schema")
+    # print(medicine_price_response.json())
     # await ctx.send(sender, medicine_price_response)
 
 

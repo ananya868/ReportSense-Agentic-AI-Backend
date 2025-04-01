@@ -6,10 +6,12 @@ from tqdm import tqdm
 from tqdm.asyncio import tqdm_asyncio
 import asyncio
 
+from pydantic import BaseModel, Field
 from googlesearch import search 
 from crawl4ai import AsyncWebCrawler, CrawlerRunConfig, BrowserConfig, CacheMode
 from openai import OpenAI
 from groq import Groq
+import instructor
 
 from dotenv import load_dotenv
 
@@ -76,7 +78,7 @@ class FetchMedicinePrices:
                 
             return fetched_pages
 
-    def clean_pages(self, pages: list[str], max_tokens: int = 2000):
+    def clean_pages(self, pages: list[str], max_tokens: int = 1200):
         """
         Cleans the fetched pages to extract the prices.
         """
@@ -109,11 +111,24 @@ class FetchMedicinePrices:
             print(f"Page {i+1} has {len(encoding.encode(page))} tokens")
         return cleaned_pages
     
-    def llm(self, cleaned_page: str, api_key: str = os.getenv("GROQ_API_KEY")):
+    def llm(self, cleaned_page: str, provider: str = "openai"):
         """
         Extracts the prices from the cleaned pages using the Groq API.
         """
-        client = Groq(api_key=api_key)
+        assert provider in ["openai", "groq"], "Invalid provider. Choose either 'openai' or 'groq'."
+        if provider == "openai":
+            api_key = os.getenv("OPENAI_API_KEY")
+            try:
+                client = OpenAI(api_key=api_key)
+            except Exception as e:
+                raise ValueError(f"Failed to initialize OpenAI client: {e}")
+        elif provider == "groq":
+            api_key = os.getenv("GROQ_API_KEY")
+            try:
+                groq_client = Groq(api_key=api_key)
+                client = instructor.from_groq(groq_client)
+            except Exception as e:
+                raise ValueError(f"Failed to initialize Groq client: {e}")
 
         prompt_message = f"""
             Given below is a text fetched from a pharmacy website. Please extract the prices of the medicine: {self.medicine_name} from the text.
@@ -123,35 +138,64 @@ class FetchMedicinePrices:
             - name: The name of the medicine
             - price: The price of the medicine
             - quantity: The number of tablets (if given)
-        - Only output the dictionary, no extra text! 
+        - Only output in the specified format. If the information is not available, return "NA" for the respective field.
 
         """ 
+        class ResponseModel(BaseModel):
+            name: str = Field(..., description="The name of the medicine")
+            price: str = Field(... , description="The price of the medicine")
+            quantity: str = Field(... , description="The number of tablets (if given)")
 
-        completion = client.chat.completions.create(
-            messages = [
-                { 
-                    "role": "user",
-                    "content": prompt_message
-                }
-            ], 
-            model = "llama-3.3-70b-versatile"
-        )
+        # LLM 
+        if provider == "openai":
+            completion = client.beta.chat.completions.parse(
+                model = "gpt-4o-mini",
+                messages = [
+                    { 
+                        "role": "user",
+                        "content": prompt_message
+                    }
+                ],
+                response_format = ResponseModel
+            )
+            response = completion.choices[0].message.parsed
+        elif provider == "groq":
+            completion = client.chat.completions.create(
+                model = "llama-3.3-70b-versatile",
+                response_model = ResponseModel,
+                messages = [
+                    { 
+                        "role": "user",
+                        "content": prompt_message
+                    }
+                ],
+            )
+            response = completion
+        return response
 
-        return completion.choices[0].message.content
-
-    def get_prices(self, cleaned_pages: list[str]):
+    def get_prices(self, urls: list[str], cleaned_pages: list[str], provider: str = "openai"):
         """
         Extracts the prices from the cleaned pages using regex.
         """
         prices = []
         # Convert the cleaned pages to json format
 
-        for page in tqdm(cleaned_pages):
-            info = self.llm(cleaned_page=page)
-            info = json.loads(info)
-            prices.append(info)
+        for url, page in tqdm(zip(urls, cleaned_pages)):
+            data = self.llm(cleaned_page = page, provider = provider)
+            # Convert the response to a dictionary
+            data_dict = {
+                "name": data.name,
+                "price": data.price,
+                "quantity": data.quantity,
+                "url": url
+            }
+            # Append the data to the list
+            prices.append(data_dict)
 
         return prices
+
+
+
 
 # Example usage 
 if __name__ == "__main__":
@@ -173,12 +217,10 @@ if __name__ == "__main__":
     cleaned_pages = fetcher.clean_pages(pages)
 
     print("Extracting prices...")
-    # # prices 
-    # prices = fetcher.get_prices(cleaned_pages)
-    # print(prices)
+
     s = time.time()
-    prices = fetcher.get_prices(cleaned_pages)
+    prices = fetcher.get_prices(urls = urls, cleaned_pages = cleaned_pages, provider = "openai")
     e = time.time()
     print(f"Time taken: {e-s} seconds")
-    print(type(prices[0])) 
-    print(prices[0])
+    print(type(prices)) 
+    print(prices)
