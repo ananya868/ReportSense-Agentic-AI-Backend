@@ -11,7 +11,7 @@ nest_asyncio.apply()
 
 
 # Agent 
-medicine_agent = Agent(name="MedicineAgent", port=5000, endpoint="http://localhost:5000/submit")
+# medicine_agent = Agent(name="MedicineAgent", port=5000, endpoint="http://localhost:5000/submit")
 
 # Medicine data fetcher agent address | Sender Agent | This agent
 # print(medicine_agent.address)
@@ -50,54 +50,49 @@ async def handle_medicine_request(ctx: Context, sender: str, msg: MedicineReques
         sender (str): The sender agent address
         msg (MedicineRequest): The MedicineRequest message
     """
-    
     # Log Context info
-    ctx.logger.info(f"Received a request to fetch data for the medicine: {msg.medicine_name} from {sender}")
+    ctx.logger.info(f"Received a request to fetch data for the medicine(s): {msg.medicine_names} from {sender}")
 
-    # Initialize the fetcher 
-    if msg.verbose:
-        print("Initiating Data Fetching...")
-    fetcher = FetchMedicineData(medicine_name=msg.medicine_name)
-    
-    # Search the web for the medicine
-    if msg.verbose:
-        print("Searching the web for the medicine...")
-    url = fetcher.search_web()
-    
-    # Fetch the webpage content
-    if msg.verbose:
-        print("Fetching the webpage content...")
-    page = asyncio.run(fetcher.fetch_webpage(url))
-    context = page[0]
-    if msg.verbose:
-        print("Webpage content fetched successfully!")
+    medicines_data = []
+    # loop through medicines 
+    for i in msg.medicine_names:
+        # ctx.logger.info(f"Fetching data for the medicine: {i}")
+        print(f"Fetching data for the medicine: {i}")
 
-    # Build prompts with context
-    formatted_prompt = prompt.format(context=context)
-    formatted_sys_prompt = sys_prompt
-    
-    # Generate medicine data points 
-    if msg.verbose:
-        print("Generating Data Points...")
-    data_points = fetcher.generate_data_points(formatted_prompt, formatted_sys_prompt)
-    # Convert to json/dict
-    data_dict = data_points.dict()
+        # Initialize the fetcher 
+        fetcher = FetchMedicineData(medicine_name=i)
+        
+        # Search the web for the medicine
+        url = fetcher.search_web()
+        print(url)
+        
+        # Fetch the webpage content
+        page = asyncio.run(fetcher.fetch_webpage(url))
+        context = page[0]
 
-    if msg.verbose:
-        print(f"Saving status: {msg.is_save}")
-    
-    if msg.is_save: # Save the data to a json file
-        with open(f"medi_data/{msg.medicine_name}_data.json", "w") as f: 
-            json.dump(data_dict, f, indent=4)
-    
-    if msg.verbose:
-        print("Data Points Generated Successfully")
+        # Build prompts with context
+        formatted_prompt = prompt.format(context=context)
+        formatted_sys_prompt = sys_prompt
+        
+        # Generate medicine data points 
+        data_points = fetcher.generate_data_points(formatted_prompt, formatted_sys_prompt)
+        # Convert to json/dict
+        data_dict = data_points.dict()
+        
+        is_save = True # Flag to save the data to a json file
+        if is_save: # Save the data to a json file
+            with open(f"medi_data/{i}_data.json", "w") as f: 
+                json.dump(data_dict, f, indent=4)
 
-    # Send the data to the LLM Medicine Informant Agent
-    medicine_response = MedicineResponse(
-        medicine_name=msg.medicine_name,
-        medicine_info=data_dict
-    )
+        print("Done for medicine: ", i)
+        info = {
+            "medicine_name": i,
+            "medicine_info": data_dict
+        }
+        medicines_data.append(info)
+
+    # Create Response object    
+    medicine_response = MedicineResponse(medicines_data = medicines_data)
     # await ctx.send(llm_medicine_informant_address, medicine_response)
 
 

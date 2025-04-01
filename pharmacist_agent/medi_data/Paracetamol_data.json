@@ -1,0 +1,88 @@
+{
+    "medication_name": "Paracetamol",
+    "generic_name": "paracetamol",
+    "ingredients": [
+        "paracetamol"
+    ],
+    "brand_names": [
+        "Panadol",
+        "Calpol",
+        "Tylenol",
+        "Alvedon"
+    ],
+    "medicine_use": "used to temporarily relieve mild-to-moderate pain and fever",
+    "common_side_effects": [
+        "Redness or soreness in or around the rectum"
+    ],
+    "severe_side_effects": [
+        "Allergic reactions, skin rashes, itching or hives, swelling of the throat, tongue or face, shortness of breath or wheezing",
+        "Skin rash or peeling, or mouth ulcers",
+        "Breathing problems",
+        "Unexplained bruising or bleeding, becoming unusually tired, getting more infections than usual",
+        "Liver problems, nausea, sudden weight loss, loss of appetite, yellowing of the eyes and skin"
+    ],
+    "immediate_attention_side_effects": [
+        "paleness",
+        "nausea",
+        "sweating",
+        "vomiting",
+        "loss of appetite",
+        "abdominal pain"
+    ],
+    "how_to_use": "Always use exactly as your doctor or pharmacist tells you to. Do not take more than the recommended dose. Check the instructions for the paracetamol product you have. Paracetamol may be taken every 4 to 6 hours. Leave at least 4 hours between doses. Do not take more than four doses in 24 hours. Do not take for more than 3 days, unless your doctor tells you to. Contact your healthcare professional if your symptoms get worse or do not improve.",
+    "storage_instructions": "Keep out of sight and reach of children; do not use the medicine after the expiry date; store below 77\u00b0F (25\u00b0C) unless instructed otherwise; store paracetamol suppositories in a cool, dry place below 77\u00b0F (25\u00b0C) and out of direct sunlight; store paracetamol effervescent tablets below 86\u00b0F (30\u00b0C); store paracetamol solution for infusion below 86\u00b0F (30\u00b0C) and do not refrigerate or freeze.",
+    "mechanism_of_action": "thought to work by blocking chemical messengers in the brain that let us know when we're in pain and by affecting the chemical messengers that regulate our body temperature; inhibits the production of prostaglandins",
+    "warnings_precautions": [
+        "Do not take paracetamol if you are allergic to it or any of the other ingredients.",
+        "May be more sensitive to side effects if consuming large amounts of alcohol.",
+        "Contact your doctor immediately if symptoms of metabolic acidosis occur."
+    ],
+    "alternative_medicines": [
+        "Tramadol",
+        "Naproxen",
+        "Hydroxyzine",
+        "Cyclobenzaprine",
+        "Meloxicam",
+        "Oxycodone",
+        "Diclofenac"
+    ],
+    "natural_alternatives": [
+        "missing"
+    ],
+    "regulatory_approval": "available over-the-counter (OTC) and as a prescription medication",
+    "drug_interactions": "Blood thinning medications such as warfarin; medications for nausea such as metoclopramide; cholestyramine for high cholesterol; lamotrigine for epilepsy; isoniazide for tuberculosis; aspirin; barbiturates and tricyclic antidepressants; probenecid; chloramphenicol; zidovudine; flucloxacillin",
+    "forms_variants": [
+        "effervescent tablet",
+        "intravenous (infusion) injection",
+        "orally disintegrating tablet",
+        "oral capsule",
+        "oral powder",
+        "oral suspension",
+        "oral tablet",
+        "suppository"
+    ],
+    "prescription_required": false,
+    "contraindications": [
+        "allergy to paracetamol or any other ingredient",
+        "severe infection",
+        "asthma sensitive to aspirin"
+    ],
+    "drug_class": "Miscellaneous analgesics",
+    "pregnancy_lactation": "can be used during pregnancy; can be taken if breastfeeding",
+    "dosage_forms": [
+        "tablets",
+        "capsules",
+        "oral suspension",
+        "suppositories",
+        "effervescent tablets",
+        "solution for infusion",
+        "orally disintegrating tablets",
+        "powder"
+    ],
+    "special_populations_children": "check with your doctor or pharmacist about the correct dose based on child's age and weight.",
+    "special_populations_elderly": "missing",
+    "special_populations_renal_impairment": "missing",
+    "special_populations_hepatic_impairment": "use caution in patients with liver problems, may need to avoid or limit use",
+    "overdose_information": "get medical help immediately; symptoms may include paleness, nausea, sweating, vomiting, loss of appetite, and abdominal pain; quick medical attention is critical even if they seem well.",
+    "reviews_rating": "7.0 / 10"
+}

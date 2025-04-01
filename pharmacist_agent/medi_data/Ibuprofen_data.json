@@ -1,0 +1,88 @@
+{
+    "medication_name": "Ibuprofen",
+    "generic_name": "ibuprofen",
+    "ingredients": [
+        "ibuprofen"
+    ],
+    "brand_names": [
+        "Advil",
+        "Genpril",
+        "IBU",
+        "Midol IB",
+        "Motrin IB",
+        "Proprinal",
+        "Smart Sense Children's Ibuprofen"
+    ],
+    "medicine_use": "Ibuprofen is used to reduce fever and treat pain or inflammation caused by many conditions such as headache, toothache, back pain, arthritis, menstrual cramps, or minor injury.",
+    "common_side_effects": [
+        "nausea",
+        "vomiting",
+        "gas",
+        "bleeding",
+        "dizziness",
+        "headache"
+    ],
+    "severe_side_effects": [
+        "stomach or intestinal bleeding",
+        "heart attack",
+        "stroke",
+        "liver problems",
+        "kidney problems",
+        "allergic reaction",
+        "severe skin reaction",
+        "vision changes",
+        "anemia"
+    ],
+    "immediate_attention_side_effects": [
+        "signs of an allergic reaction to ibuprofen",
+        "signs of a heart attack or stroke",
+        "signs of stomach bleeding",
+        "liver problems",
+        "kidney problems"
+    ],
+    "how_to_use": "Use ibuprofen exactly as directed on the label, or as prescribed by your doctor. Use the lowest dose that is effective in treating your condition. The maximum amount of ibuprofen for adults is 800 milligrams per dose or 3200 mg per day (4 maximum doses).",
+    "storage_instructions": "Store at room temperature away from moisture and heat. Do not allow the liquid medicine to freeze.",
+    "mechanism_of_action": "It works by reducing hormones that cause inflammation and pain in the body.",
+    "warnings_precautions": [
+        "Can increase risk of fatal heart attack or stroke.",
+        "Can cause stomach or intestinal bleeding, which can be fatal.",
+        "Do not use before or after heart bypass surgery."
+    ],
+    "alternative_medicines": [
+        "Naproxen"
+    ],
+    "natural_alternatives": [
+        "missing"
+    ],
+    "regulatory_approval": "Rx and/or OTC",
+    "drug_interactions": "Ask your doctor before using ibuprofen if you take an antidepressant. Potential interactions with other medications including blood thinners and certain antidepressants.",
+    "forms_variants": [
+        "oral capsule (200 mg)",
+        "oral suspension (100 mg/5 mL; 50 mg/1.25 mL)",
+        "oral tablet (100 mg; 200 mg; 400 mg; 600 mg; 800 mg)",
+        "oral tablet, chewable (100 mg; 50 mg)"
+    ],
+    "prescription_required": null,
+    "contraindications": [
+        "allergic to ibuprofen",
+        "history of asthma attack after taking aspirin or NSAID",
+        "stomach ulcers or bleeding",
+        "liver disease",
+        "kidney disease",
+        "if taking aspirin to prevent heart attack or stroke"
+    ],
+    "drug_class": "Nonsteroidal anti-inflammatory drugs",
+    "pregnancy_lactation": "Ask a doctor before using this medicine if you are pregnant or breastfeeding. Taking an NSAID during the last 20 weeks of pregnancy can cause serious heart or kidney problems in the unborn baby and possible complications with your pregnancy.",
+    "dosage_forms": [
+        "oral capsule",
+        "oral suspension",
+        "oral tablet",
+        "chewable tablet"
+    ],
+    "special_populations_children": "Do not give ibuprofen to a child younger than 6 months old without the advice of a doctor.",
+    "special_populations_elderly": "missing",
+    "special_populations_renal_impairment": "missing",
+    "special_populations_hepatic_impairment": "missing",
+    "overdose_information": "Seek emergency medical attention or call the Poison Help line at 1-800-222-1222. Overdose symptoms may include nausea, vomiting, stomach pain, drowsiness, black or bloody stools, coughing up blood, shallow breathing, fainting or coma.",
+    "reviews_rating": "7.4 / 10"
+}

@@ -31,7 +31,7 @@ class FetchMedicineData:
         """
         self.medicine_name = medicine_name
     
-    def search_web(self, num_res: int = 1) -> list[str]:
+    def search_web(self, num_res: int = 3) -> list[str]:
         """
         Search the web for information about the medicine.
         
@@ -44,9 +44,15 @@ class FetchMedicineData:
         Returns:
             list[str]: A list of URLs from the search results.
         """
-        return [result for result in search(
-            f"{self.medicine_name} drugs.com", num_results=num_res, unique=False, advanced=False
+        res = [result for result in search(
+            f"{self.medicine_name} drugs.com", num_results=num_res 
         )]
+        # Check if "https or http in the urls list", pick up the first one with https or http
+        for i in res:
+            if "https" in i or "http" in i:
+                res = [i]
+                break
+        return res
     
     async def fetch_webpage(self, url: str) -> list[str]:
         """
@@ -118,33 +124,34 @@ class FetchMedicineData:
 
 # Example Usage
 if __name__=="__main__":
-    fetcher = FetchMedicineData(medicine_name="Levetiracetam")
+    fetcher = FetchMedicineData(medicine_name="ibuprofen")
     print(fetcher.medicine_name)
     search_results = fetcher.search_web()
     print(search_results)
-    print("Fetching Webpage...")
-    page = asyncio.run(fetcher.fetch_webpage(search_results))
-    context = page[0]
-    # Define the prompt and system prompt 
-    prompt = f"""Analyze the provided webpage content and extract structured details about the medication using the following fields:
-        **Important Guidelines**:
-        1. If any information is missing in the provided context, return `"missing"` as its value.
-        2. Do NOT generate or assume any information not explicitly found in the context.
-        3. Return the extracted details in JSON format.
-        Now, process the following webpage content and generate the structured output:
-        \n\n{context}
-    """
-    sys_prompt = """You are a highly intelligent medical assistant designed to extract structured information about medications from a given webpage. 
-        Your goal is to analyze the provided context carefully and fill in the relevant fields. 
-        If a particular piece of information is not found, return "missing" as its value instead of leaving it blank. 
-
-    #     Ensure accuracy while extracting details and avoid making assumptions. Only use information explicitly stated in the context.
+    # print(search_results)
+    # print("Fetching Webpage...")
+    # page = asyncio.run(fetcher.fetch_webpage(search_results))
+    # context = page[0]
+    # # Define the prompt and system prompt 
+    # prompt = f"""Analyze the provided webpage content and extract structured details about the medication using the following fields:
+    #     **Important Guidelines**:
+    #     1. If any information is missing in the provided context, return `"missing"` as its value.
+    #     2. Do NOT generate or assume any information not explicitly found in the context.
+    #     3. Return the extracted details in JSON format.
+    #     Now, process the following webpage content and generate the structured output:
+    #     \n\n{context}
     # """
-    print("Generating Data Points...")
-    # Generate data points
-    data_points = fetcher.generate_data_points(context, prompt, sys_prompt)
-    # Convert to json/dict 
-    data_dict = data_points.dict()
-    # dump json 
-    with open("medicine_data.json", "w") as f: 
-        json.dump(data_dict, f, indent=4)
+    # sys_prompt = """You are a highly intelligent medical assistant designed to extract structured information about medications from a given webpage. 
+    #     Your goal is to analyze the provided context carefully and fill in the relevant fields. 
+    #     If a particular piece of information is not found, return "missing" as its value instead of leaving it blank. 
+
+    # #     Ensure accuracy while extracting details and avoid making assumptions. Only use information explicitly stated in the context.
+    # # """
+    # print("Generating Data Points...")
+    # # Generate data points
+    # data_points = fetcher.generate_data_points(context, prompt, sys_prompt)
+    # # Convert to json/dict 
+    # data_dict = data_points.dict()
+    # # dump json 
+    # with open("medicine_data.json", "w") as f: 
+    #     json.dump(data_dict, f, indent=4)
