@@ -20,21 +20,21 @@ def main():
         top_k=args.top_k
     )  
 
-    print("\n=== ChatWithDocs CLI ===")
+    print("\n=== 📑 ChatWithDocs CLI 📑 ===")
     print("Type 'exit', 'quit', or press Ctrl+C to end the conversation.\n")
     
     try:
         while True:
-            user_input = input("\nYou: ")
+            user_input = input("\n👦 You => ")
             if user_input.lower() in ["exit", "quit"]:
                 print("Goodbye!")
                 break
                 
             # Get response
-            print("\nThinking...")
+            print("\n🧠🤔 Thinking . . . ")
             response = chatbot.intent(user_input)
             
-            print(f"\nAssistant: {response}")
+            print(f"\n🤖 Assistant => {response}")
             
     except KeyboardInterrupt:
         print("\nGoodbye!")

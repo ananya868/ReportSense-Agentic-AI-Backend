@@ -3,7 +3,7 @@ Chat worker for the chatbot agent.
 This worker is responsible for handling chat messages and generating responses using LLM
 """
 
-import os, sys 
+import os, sys, json
 
 from langchain_openai import OpenAIEmbeddings
 from langchain_core.vectorstores import InMemoryVectorStore
@@ -63,19 +63,26 @@ class ChatWithDocs:
 
         try: 
             prompt = f"""
+                You are part of AI medical chatbot responsible for determining the intent of user queries. 
+                The database from which you answer question contains three things: 
+                    - Medical Reports (Text based) : These are the medical reports of the user. (and their summaries)
+                    - Medical Images (MRIs, Chest X-rays, etc.) findings: These are the findings from the medical images of the user. 
+                    - Medicine data : These are the data about the medicines prescribed to the user. (Side effects, dosage, how to use, etc.)
+                    - Medicine links : These are buying links for the medicine
+
+                Keeping the above in mind, you are to classify the user query into one of the following categories:
+                1. Follow-up query: A query that is a follow-up to the previous conversation and can be answered with existing context.
+                2. New query: A query that is not a follow-up to the previous conversation and requires fetching new documentation.
+                
                 Analyze this query in the context of the current conversation.
                 
-                Current topic: {self.last_query_topic}
+                last topic: {self.last_query_topic}
                 
                 Latest conversation:
                 {self.conversation_history[-2]['content'] if len(self.conversation_history) >= 2 else "No previous message"}
                 {self.conversation_history[-1]['content'] if len(self.conversation_history) >= 1 else "No previous message"}
                 
                 New query: {query}
-                
-                Determine:
-                1. Is this a follow-up to the previous conversation?
-                2. Does it require fetching new documentation or can it be answered with existing context?
             """
             classification = self.llm.beta.chat.completions.parse(
                 model = "gpt-4o-mini",
@@ -87,7 +94,9 @@ class ChatWithDocs:
                 ],
                 response_format = QueryClassification
             ) 
-            return classification.is_followup, classification.requires_new_context
+            is_followup = json.loads(classification.choices[0].message.content)["is_followup"]
+            requires_new_context = json.loads(classification.choices[0].message.content)["requires_new_context"]
+            return is_followup, requires_new_context
 
         except Exception as e:
             print(e)
@@ -99,7 +108,7 @@ class ChatWithDocs:
         is_followup, requires_new_context = self.classify_query(query)
 
         if not is_followup or requires_new_context:
-            print(":: Fetching new context ::")
+            print(":: Fetching new context 🔍 ::")
             # New context has to be fetched
             new_context = self.run_retriever(query)
             self.current_context = new_context
@@ -110,7 +119,7 @@ class ChatWithDocs:
                 context = self.current_context,
             )
         else: 
-            print(":: Follow up querying ::")
+            print(":: Follow up querying ⤴️ ::")
             # Use existing context
             augmented_query = self.create_followup_query(query)
 
