@@ -3,6 +3,7 @@
         "dotenv",
         "googlesearch",
         "Groq",
-        "uagents"
+        "uagents",
+        "vectorstores"
     ]
 }

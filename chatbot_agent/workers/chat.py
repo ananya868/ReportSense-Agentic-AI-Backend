@@ -33,13 +33,13 @@ class ChatWithDocs:
             print("data.txt found!")
             
 
-    def create_followup_query(self, query: str):
+    def create_followup_prompt(self, query: str):
         recent_exchanges = self.conversation_history[-3:] if len(self.conversation_history) >= 3 else self.conversation_history
 
-        history_text = "\n".join([f"{msg['role'].capitalize()}: {msg['content']}" for msg in recent_exchanges])
+        history_text = "\n".join([f"{msg['role'].capitalize()}: {msg['content']}" for msg in recent_exchanges]) # Last 3 messages
         # Create the follow-up query
-        augmented_query = f"""
-            I'm having a conversation about {self.last_query_topic}.
+        augmented_prompt = f"""
+            The last topic on which conversation was held was: {self.last_query_topic}.
         
             Previous conversation:
             {history_text}
@@ -47,8 +47,10 @@ class ChatWithDocs:
             Current question: {query}
             
             Please answer the current question in the context of our conversation.
+            Make sure to be clear and expressive (Use Emojis) and provide answer in a conversational tone.
+            You might use formatting like bullet points, tables, etc. to make the answer more readable.
         """
-        return augmented_query
+        return augmented_prompt
 
     def classify_query(self, query: str): 
         assert isinstance(query, str), "Query must be a string"
@@ -72,7 +74,7 @@ class ChatWithDocs:
 
                 Keeping the above in mind, you are to classify the user query into one of the following categories:
                 1. Follow-up query: A query that is a follow-up to the previous conversation and can be answered with existing context.
-                2. New query: A query that is not a follow-up to the previous conversation and requires fetching new documentation.
+                2. New query: A query that is not a follow-up to the previous conversation and requires fetching new data.
                 
                 Analyze this query in the context of the current conversation.
                 
@@ -114,18 +116,18 @@ class ChatWithDocs:
             self.current_context = new_context
             self.last_query_topic = query
 
+            prompt = rag_prompt.format(query = query, context = self.current_context, history = self.conversation_history)
+
             response = self.chat(
-                query = query, 
-                context = self.current_context,
+                prompt_temp = prompt
             )
         else: 
             print(":: Follow up querying ⤴️ ::")
             # Use existing context
-            augmented_query = self.create_followup_query(query)
+            prompt = self.create_followup_prompt(query)
 
             response = self.chat(
-                query = augmented_query, 
-                context = self.current_context
+                prompt_temp = prompt
             )
 
         self.conversation_history.append({"role": "user", "content": query})
@@ -178,19 +180,16 @@ class ChatWithDocs:
         return combined_context
 
     def chat(
-        self,
-        query: str, 
-        context: str
+        self, 
+        prompt_temp: str
     ):
-        assert isinstance(query, str), "Query must be a string"
-        assert isinstance(context, str), "Context must be a string"
 
         response = self.llm.chat.completions.create(
             model = self.model,
             messages = [
                 {
                     "role": "user", 
-                    "content": rag_prompt.format(query = query, context = context, history = self.conversation_history)
+                    "content": prompt_temp
                 }
             ]
         )

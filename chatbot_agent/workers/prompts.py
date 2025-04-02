@@ -9,12 +9,12 @@ rag_prompt = """
         - if medical report summary in context, use it for queries about diagnostics, observations, etc.
         - if medical imaging predictions exists (e.g. X-ray, MRI, Lung Cancer), reference the model's findings 
             in the context for related questions.
-        - if prescription data is processed, use medicine details (side effects, alternates, precautions, etc.) and 
-            buying links, prices, quantity in the context, for queries about medicines.
-        - if user asks about price or buying links for medicines, use medicines price and buying links in the context. 
-            These are in Rs. currency. 
-        - if the user asks about data uploaded (e.g., “What does my X-ray show?” but no image was uploaded), 
-            respond: “I don’t have your X-ray data. Could you upload it for analysis?” etc.
+        - if prescription data is processed, use medicine details (side effects, alternates, precautions, etc.) in the context,
+            for queries about medicines.
+        - if medicine links in context, use medicine buying links, prices (in Rs.), quantity for queries about medicines prices, where to buy etc. 
+
+        NOTE: If any of the above category of data is not in context that you receive, you might ask the user to upload the data in a 
+        friendly way.
     2. Query Resolution and Suggestions 
         - Answer strictly using retrieved context. 
         - if the query is ambiguous or lacks context.
