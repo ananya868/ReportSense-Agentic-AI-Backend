@@ -1,4 +1,11 @@
-from workers.fetch_medicine_data import FetchMedicineData
+"""
+Medicine Data Agent 
+===================
+
+This agent is responsible for fetching data about medicines from the web.
+"""
+
+from workers.medicine_data_worker import FetchMedicineData
 from agent_models.medicine_models import MedicineRequest, MedicineResponse
 
 from uagents import Agent, Context 
@@ -10,19 +17,17 @@ import nest_asyncio
 nest_asyncio.apply()
 
 
-# Agent 
-# medicine_agent = Agent(name="MedicineAgent", port=5000, endpoint="http://localhost:5000/submit")
+"""Agent"""
+medicine_agent = Agent(name="MedicineAgent", port=5000, endpoint="http://localhost:5000/submit")
 
-# Medicine data fetcher agent address | Sender Agent | This agent
-# print(medicine_agent.address)
+"""Agent Address"""
 medicine_data_agent_address = "agent1qfuf2sf8dczw9pzy059x9wrwq4sdtnf2m5uqgwlttwmgdezvygxpk9sqg6n"
 
-# Chatbot agent or Medicine finder agent address | Receiver Agent 
-chatbot_agent_address = ""
+"""Chatbot agent or Medicine finder agent address"""
 medicine_finder_agent_address = "agent1qgfx3g350nc4gqrguhfqr0hxv9zx72urq6jhfatf3s765rhzncjc2wcssnq"
 
 
-# Define the prompt and system prompt 
+"""Prompt and System Prompt"""
 prompt = """Analyze the provided webpage content and extract structured details about the medication using the following fields:
     **Important Guidelines**:
     1. If any information is missing in the provided context, return `"missing"` as its value.
@@ -38,6 +43,7 @@ sys_prompt = """You are a highly intelligent medical assistant designed to extra
 """
 
 
+"""Define the Agent"""
 @medicine_agent.on_message(model=MedicineRequest)
 async def handle_medicine_request(ctx: Context, sender: str, msg: MedicineRequest):
     """

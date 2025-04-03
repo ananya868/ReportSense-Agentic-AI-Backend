@@ -1,6 +1,6 @@
 import os
 import argparse 
-from chat import ChatWithDocs
+from chat_worker import ChatWithDocs
 from dotenv import load_dotenv
 
 load_dotenv()

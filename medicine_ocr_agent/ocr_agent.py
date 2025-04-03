@@ -1,4 +1,7 @@
 """
+Medicine OCR Agent
+===================
+
 Medicine OCR Agent receives a request from Test Agent (Manager Agent) to fetch medicine names from an image.
 Uses vision model to detect the medicine names from the image.
 The detected names are then confirmed by the user.
@@ -10,29 +13,30 @@ from uagents import Agent, Context
 import asyncio
 import os
 from dotenv import load_dotenv
-load_dotenv()
+from typing import Any 
 
-from workers.medicine_ocr_model import MedicineOCR
+from workers.medicine_ocr_worker import MedicineOCR
 from agent_models.medicine_models import MedicineOCRRequest, MedicineOCRResponse
 
+load_dotenv()
 
+
+"""Agent"""
 ocr_agent = Agent(name="OCR Agent", port=5002, endpoint="http://localhost:5002/submit")
 
-# Medicine data fetcher agent address or Medicine finder agent | Receiver Agents 
+"""Agent Address"""
+ocr_agent_address = "agent1q0xe4wfkjuk3zc6v5683cyfa7gk38erd2lzt49pejmryv822x084wqeygc2"
+
+"""Medicine data fetcher agent address or Medicine finder agent"""
 medicine_data_agent_address = "agent1qfuf2sf8dczw9pzy059x9wrwq4sdtnf2m5uqgwlttwmgdezvygxpk9sqg6n"
 medicine_finder_agent = "agent1qgfx3g350nc4gqrguhfqr0hxv9zx72urq6jhfatf3s765rhzncjc2wcssnq"
 
-# Medicine OCR model | Sender Agent | This agent 
-# print(ocr_agent.address) 
-ocr_agent_address = "agent1q0xe4wfkjuk3zc6v5683cyfa7gk38erd2lzt49pejmryv822x084wqeygc2"
-
-
-# Workers 
+"""Worker"""  
 med_ocr = MedicineOCR(api_key = os.getenv("OPENAI_API_KEY"))
 
 
-# Helper Functions 
-def get_manual_entry():
+"""Function Definitions"""
+def get_manual_entry() -> list:
     """
     Get medicine names through manual user input.
     
@@ -53,7 +57,7 @@ def get_manual_entry():
         medicines = [med.strip() for med in user_input.split(",") if med.strip()]
         return medicines
 
-def confirm_medicines(medicines):
+def confirm_medicines(medicines) -> Any:
     """
     Ask user to confirm the detected/entered medicine names.
     
@@ -71,10 +75,13 @@ def confirm_medicines(medicines):
     
     return confirmation == "yes", medicines
 
-def process_medicines(img_path):
+def process_medicines(img_path) -> list:
     """
     Main function to handle medicine detection workflow.
-    
+
+    Args:
+        img_path (str): Path to the image containing medicine names.
+
     Returns:
         list: Final list of confirmed medicines
     """
@@ -129,7 +136,7 @@ def process_medicines(img_path):
     return medicines
 
 
-# Agent Function
+"""Define the agent"""
 # @ocr_agent.on_message(Model=MedicineOCRRequest) # to be implemented ... 
 @ocr_agent.on_event("startup")
 async def send_request(ctx: Context):
@@ -150,6 +157,7 @@ async def send_request(ctx: Context):
 
     # Send a request to the medicine agent
     # await ctx.send(medicine_agent_address, MedicineRequest(medicine_name=medicine_name))
+
 
 
 # run the agent 

@@ -1,20 +1,24 @@
+"""
+This module provides a class for fetching medicine information using OCR.
+It uses the OpenAI API to analyze images of medical prescriptions and extract the names of medicines. 
+"""
+
 import base64 
-from openai import OpenAI 
 import json 
 import os 
 import logging
+
+from openai import OpenAI 
 
 logging.getLogger("openai").setLevel(logging.ERROR)
 logging.getLogger("httpx").setLevel(logging.ERROR)
 
 
 class MedicineOCR:
-    """
-    A class for fetching medicine information using OCR.
-    """
+    """A class for fetching medicine information using OCR."""
 
     # The prompt for the GPT-4o model
-    prompt = """ 
+    DEFAULT_PROMPT = """ 
         The following is an image of a medical prescription. 
         Analyze the image carefully and extract names of the medicines. 
         Only return the names of the medicines in the prescription in the format:
@@ -22,10 +26,16 @@ class MedicineOCR:
         If you are unable to extract any medicines, return an empty list.
     """ 
 
-    def __init__(self, api_key: str = os.getenv("OPENAI_API_KEY")): 
+    def __init__(self, api_key: str = os.getenv("OPENAI_API_KEY")) -> None:
+        """
+        Initialize the MedicineOCR class.
+
+        Args:
+            api_key (str): The OpenAI API key
+        """ 
         self.api_key = api_key
     
-    def encode_image(self, image_path: str): 
+    def encode_image(self, image_path: str) -> str: 
         """
         Encode an image file to base64.
 
@@ -40,7 +50,7 @@ class MedicineOCR:
 
     def fetch(self, image_path: str) -> list[str]:
         """
-        Fetch medicine information using OCR.
+        Fetch medicine information using OpenAI Vision model.
 
         Args:
             image_path (str): The path to the image file
@@ -48,35 +58,35 @@ class MedicineOCR:
         Returns:
             dict: The extracted medicine information
         """
-        print("Analyzing the Prescription ..")
         # Initialize the OpenAI client
         client = OpenAI(api_key=self.api_key)
-
         # Encode the image 
         encoded_image = self.encode_image(image_path)
-
         # Generate the prompt 
-        prompt_msg = self.prompt 
-
+        prompt_msg = self.DEFAULT_PROMPT 
         # Generate the completion
-        completion = client.chat.completions.create(
-            model="gpt-4o",
-            messages=[
-                {
-                    "role": "user",
-                    "content": [
-                        { "type": "text", "text": prompt_msg },
-                        {
-                            "type": "image_url",
-                            "image_url": {
-                                "url": f"data:image/jpeg;base64,{encoded_image}",
+        try:
+            completion = client.chat.completions.create(
+                model="gpt-4o",
+                messages=[
+                    {
+                        "role": "user",
+                        "content": [
+                            { "type": "text", "text": prompt_msg },
+                            {
+                                "type": "image_url",
+                                "image_url": {
+                                    "url": f"data:image/jpeg;base64,{encoded_image}",
+                                },
                             },
-                        },
-                    ],
-                }
-            ],
-        )
+                        ],
+                    }
+                ],
+            )
+        except Exception as e:
+            raise ValueError(f"Failed to generate completion: {e}")
 
+        # Response 
         response = completion.choices[0].message.content 
         res_dict = json.loads(response)
         return res_dict.get("medicines", [])

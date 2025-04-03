@@ -1,19 +1,22 @@
+"""
+This script fetches the prices of a given medicine from various pharmacy websites using web scraping and LLMs.
+It uses the `crawl4ai` library for web crawling and the `instructor` library for LLM processing. 
+"""
+
 import os, json 
 import re 
 import tiktoken
-from datetime import datetime
 from tqdm import tqdm
-from tqdm.asyncio import tqdm_asyncio
 import asyncio
-
 from pydantic import BaseModel, Field
+from dotenv import load_dotenv
+from typing import Any
+
 from googlesearch import search 
 from crawl4ai import AsyncWebCrawler, CrawlerRunConfig, BrowserConfig, CacheMode
 from openai import OpenAI
 from groq import Groq
 import instructor
-
-from dotenv import load_dotenv
 
 load_dotenv()
 
@@ -23,15 +26,24 @@ class FetchMedicinePrices:
     A class to fetch the prices of a medicine from various pharmacy websites.
     """
 
-    def __init__(self, medicine_name: str):
+    def __init__(self, medicine_name: str) -> None:
         """
         Initializes the FetchMedicinePrices object with the name of the medicine.
+
+        Args:
+            medicine_name (str): The name of the medicine to fetch prices for.
         """
         self.medicine_name = medicine_name
 
-    def fetch_links(self):
+    def fetch_links(self) -> list[str]:
         """ 
         Fetches the URLs of the websites that contain the prices of the medicine.
+
+        Args: 
+            medicine_name (str): The name of the medicine. 
+
+        Returns:
+            list[str]: A list of URLs containing the prices of the medicine.
         """
         # List of pharmacy domains to search
         pharmacy_domains = [
@@ -41,9 +53,7 @@ class FetchMedicinePrices:
             "apollopharmacy.in",
             "medkart.in"
         ]
-        
         urls = []
-        
         # Iterate through each domain and search for the medicine
         for domain in pharmacy_domains:
             search_query = f"{self.medicine_name} {domain} price"
@@ -51,21 +61,27 @@ class FetchMedicinePrices:
                 if domain in result:
                     urls.append(result)
                     break
-        
         return urls
 
-    async def fetch_prices(self, urls: list[str]):
+    async def fetch_prices(self, urls: list[str]) -> list[str]:
         """
         Fetches the prices of the medicine from the given URLs.
+
+        Args:
+            urls (list[str]): A list of URLs to fetch prices from.
+
+        Returns:
+            list[str]: A list of fetched pages.
         """
         run_conf = CrawlerRunConfig(
-            cache_mode=CacheMode.BYPASS,  # Don't use cached results # Don't follow internal links
-            exclude_external_links=True,  # Don't follow external links
-            excluded_tags=["header", "footer", "nav"],  # Exclude these HTML elements
+            cache_mode=CacheMode.BYPASS,  
+            exclude_external_links=True, 
+            excluded_tags=["header", "footer", "nav"],
             stream=False  
         )
         browser_conf = BrowserConfig(headless=True)
 
+        # Run Crawler 
         async with AsyncWebCrawler(browser_config=browser_conf) as crawler:
             results = await crawler.arun_many(urls, config=run_conf)
             fetched_pages = []
@@ -78,12 +94,18 @@ class FetchMedicinePrices:
                 
             return fetched_pages
 
-    def clean_pages(self, pages: list[str], max_tokens: int = 1200):
+    def clean_pages(self, pages: list[str], max_tokens: int = 1200) -> list[str]:
         """
         Cleans the fetched pages to extract the prices.
+
+        Args:
+            pages (list[str]): A list of fetched pages.
+            max_tokens (int, optional): The maximum number of tokens allowed in the cleaned pages. Defaults to 1200.
+
+        Returns:
+            list[str]: A list of cleaned pages.
         """
         cleaned_pages = []
-
         for page in pages: 
             # Remove URLs 
             text = re.sub(r'http[s]?://\S+', '', page)
@@ -105,15 +127,18 @@ class FetchMedicinePrices:
             result.append(page)
 
         cleaned_pages = result
-
-        # print total number of tokens in each page
-        for i, page in enumerate(cleaned_pages):
-            print(f"Page {i+1} has {len(encoding.encode(page))} tokens")
         return cleaned_pages
     
-    def llm(self, cleaned_page: str, provider: str = "openai"):
+    def llm(self, cleaned_page: str, provider: str = "openai") -> Any:
         """
         Extracts the prices from the cleaned pages using the Groq API.
+
+        Args:   
+            cleaned_page (str): The cleaned page to extract prices from.
+            provider (str, optional): The provider to use for LLM processing. Defaults to "openai".
+        
+        Returns:
+            Any: The extracted prices.
         """
         assert provider in ["openai", "groq"], "Invalid provider. Choose either 'openai' or 'groq'."
         if provider == "openai":
@@ -130,6 +155,7 @@ class FetchMedicinePrices:
             except Exception as e:
                 raise ValueError(f"Failed to initialize Groq client: {e}")
 
+        # Prompt message
         prompt_message = f"""
             Given below is a text fetched from a pharmacy website. Please extract the prices of the medicine: {self.medicine_name} from the text.
             Also the number of tablets (if given). 
@@ -141,45 +167,56 @@ class FetchMedicinePrices:
         - Only output in the specified format. If the information is not available, return "NA" for the respective field.
 
         """ 
+        # Schema
         class ResponseModel(BaseModel):
             name: str = Field(..., description="The name of the medicine")
             price: str = Field(... , description="The price of the medicine")
             quantity: str = Field(... , description="The number of tablets (if given)")
 
-        # LLM 
-        if provider == "openai":
-            completion = client.beta.chat.completions.parse(
-                model = "gpt-4o-mini",
-                messages = [
-                    { 
-                        "role": "user",
-                        "content": prompt_message
-                    }
-                ],
-                response_format = ResponseModel
-            )
-            response = completion.choices[0].message.parsed
-        elif provider == "groq":
-            completion = client.chat.completions.create(
-                model = "llama-3.3-70b-versatile",
-                response_model = ResponseModel,
-                messages = [
-                    { 
-                        "role": "user",
-                        "content": prompt_message
-                    }
-                ],
-            )
-            response = completion
+        # LLM Run 
+        try: 
+            if provider == "openai":
+                completion = client.beta.chat.completions.parse(
+                    model = "gpt-4o-mini",
+                    messages = [
+                        { 
+                            "role": "user",
+                            "content": prompt_message
+                        }
+                    ],
+                    response_format = ResponseModel
+                )
+                response = completion.choices[0].message.parsed
+            elif provider == "groq":
+                completion = client.chat.completions.create(
+                    model = "llama-3.3-70b-versatile",
+                    response_model = ResponseModel,
+                    messages = [
+                        { 
+                            "role": "user",
+                            "content": prompt_message
+                        }
+                    ],
+                )
+                response = completion
+        except Exception as e:
+            raise ValueError(f"Failed to process LLM request: {e}")
         return response
 
-    def get_prices(self, urls: list[str], cleaned_pages: list[str], provider: str = "openai"):
+    def get_prices(self, urls: list[str], cleaned_pages: list[str], provider: str = "openai") -> list[dict[str, str]]:
         """
-        Extracts the prices from the cleaned pages using regex.
+        Process the cleaned pages using LLM to extract prices.
+
+        Args:
+            urls (list[str]): A list of URLs.
+            cleaned_pages (list[str]): A list of cleaned pages.
+            provider (str, optional): The provider to use for LLM processing. Defaults to "openai".
+        
+        Returns:
+            list[dict[str, str]]: A list of dictionaries containing the extracted prices.
         """
         prices = []
-        # Convert the cleaned pages to json format
-
+        # Iterate through each cleaned page and extract prices using LLM
         for url, page in tqdm(zip(urls, cleaned_pages)):
             data = self.llm(cleaned_page = page, provider = provider)
             # Convert the response to a dictionary
@@ -191,37 +228,6 @@ class FetchMedicinePrices:
             }
             # Append the data to the list
             prices.append(data_dict)
-
         return prices
 
 
-
-
-# Example usage 
-if __name__ == "__main__":
-    import asyncio
-    from concurrent.futures import ThreadPoolExecutor
-    import time
-
-    for i in ['ibuprofen', 'paracetamol']:
-        print("Fetching medicine prices...")
-        medicine_name = i
-        fetcher = FetchMedicinePrices(medicine_name)
-        urls = fetcher.fetch_links()
-        
-        print("Scraping the websites...")
-        # Scrapper 
-        pages = asyncio.run(fetcher.fetch_prices(urls))
-        
-        print("Cleaning the pages...")
-        # Cleaning
-        cleaned_pages = fetcher.clean_pages(pages)
-
-        print("Extracting prices...")
-
-        s = time.time()
-        prices = fetcher.get_prices(urls = urls, cleaned_pages = cleaned_pages, provider = "openai")
-        e = time.time()
-        print(f"Time taken: {e-s} seconds") 
-        print(prices)
-        print(" -- - - -- - -- - -- - -")
